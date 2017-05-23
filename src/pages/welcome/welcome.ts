@@ -22,6 +22,8 @@ export class WelcomePage {
   public myCallback:void;
   public map:any;
   service:any;
+  public poititle:string="Show List";
+  public showlist=true;
 
  public ResultModel:Model.RootObject;
 
@@ -108,9 +110,13 @@ export class WelcomePage {
                                       position: results[0].geometry.location
                                     });
                                       let content = "<h4>"+results[0].formatted_address+"</h4>";  
-                                      let infoWindow = new google.maps.InfoWindow({ content: content });
-                                                    infoWindow.open(this.map, marker);
-                                                    marker.setAnimation(google.maps.Animation.BOUNCE);
+                                      let infoWindow = new google.maps.InfoWindow({ content: content, maxWidth:10 });
+                                       google.maps.event.addListener(marker, 'click', () => {
+                                                        infoWindow.open(this.map, marker);
+                                                          marker.setAnimation(google.maps.Animation.BOUNCE);
+                                                      });
+                                                   // infoWindow.open(this.map, marker);
+                                                  
                                        
                                            this.map.mapTypes.set('map_style', styledMap);
                                             this.map.setMapTypeId('map_style');
@@ -138,6 +144,11 @@ export class WelcomePage {
 
   signup() {
     this.navCtrl.push(SignupPage);
+  }
+
+  showpoilist(){
+      this.showlist=!this.showlist;
+      this.poititle=(this.showlist)?"show list in map":"show list";
   }
 
  
