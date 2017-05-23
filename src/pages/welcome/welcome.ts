@@ -31,6 +31,7 @@ export class WelcomePage {
       this.ResultModel=navParams.data;
       this.plt.ready().then((readySource) => {
       console.log('Platform ready from', readySource);
+      this.map=null;
         this.searchPOI();
 
        });
@@ -39,7 +40,7 @@ export class WelcomePage {
 
   searchPOI(){
     debugger;
- var pyrmont = new google.maps.LatLng(-33.8665433,151.1956316);
+ var pyrmont = new google.maps.LatLng(this.ResultModel.result.geometry.location.lat,this.ResultModel.result.geometry.location.lng);
 
 
  let mapOptions = {
@@ -48,43 +49,77 @@ export class WelcomePage {
       mapTypeId: google.maps.MapTypeId.ROADMAP
     }
   this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-  var request = {
-    location: pyrmont,
-    radius: '500',
-    types: ['store']
-  };
+  // var request = {
+  //   location: pyrmont,
+  //   radius: '500',
+  //   types: ['store']
+  // };
 
   this.service = new google.maps.places.PlacesService(this.map);
-  this.service.nearbySearch(request, this.callback);
-
-
-
-
-  };
- callback(results, status) {
-  var map=this.map;
-  if (status == google.maps.places.PlacesServiceStatus.OK) {
-    for (var i = 0; i < results.length; i++) {
-      var place = results[i];
-      let marker = new google.maps.Marker({
-        map: map,
-        animation: google.maps.Animation.DROP,
-        position: place.LatLng
-       });
  
-       let content = "<h4>Information!</h4>";  
-        let infoWindow = new google.maps.InfoWindow({
-          content: content
-        });
- 
-        google.maps.event.addListener(marker, 'click', () => {
-          infoWindow.open(map, marker);
-        });
-    }
-  }
+  this.service.nearbySearch({location: pyrmont,radius: 500, type: ['pub']}, (results1, status) => {
+                  for (var i = 0; i < results1.length; i++) {
+                      var place = results1[i];
+                        var geocoder = new google.maps.Geocoder;
+                          var infowindow = new google.maps.InfoWindow;
+                        geocoder.geocode({'placeId': place.place_id }, (results, status) => {
+                        debugger;
+                        if (status === 'OK') {
+                                  if (results[0]) {
+                                    this.map.setZoom(11);
+                                    this.map.setCenter(results[0].geometry.location);
+                                    var marker = new google.maps.Marker({
+                                      map: this.map,
+                                       animation: google.maps.Animation.DROP,
+                                      position: results[0].geometry.location
+                                    });
+                                      let content = "<h4>"+results[0].formatted_address+"</h4>";  
+                                      let infoWindow = new google.maps.InfoWindow({ content: content });
+                                                    infoWindow.open(this.map, marker);
+                                                    marker.setAnimation(google.maps.Animation.BOUNCE);
+                                          //  google.maps.event.addListener(marker, 'click', () => {
+                                          //           infoWindow.open(this.map, marker);
+                                          //           marker.setAnimation(google.maps.Animation.BOUNCE);
+                                          //         });
+                                 
+                                  } else {
+                                    window.alert('No results found');
+                                  }
+                            } else {
+                              //window.alert('Geocoder failed due to: ' + status);
+                            }
+                  });
+                  }
+                  
+                   
+                  });
+
+
+
 };
 
+// setmarker(results,status){
 
+//  if (status == google.maps.places.PlacesServiceStatus.OK) {
+//                     for (var i = 0; i < results.length; i++) {
+//                       var place = results[i];
+//                       let marker = new google.maps.Marker({
+//                         map: this.map,
+//                         animation: google.maps.Animation.DROP,
+//                         position: place.geometry.location
+//                       });
+                
+//                         let content = "<h4>Information!</h4>";  
+//                         let infoWindow = new google.maps.InfoWindow({
+//                           content: content
+//                         });
+                
+//                         google.maps.event.addListener(marker, 'click', () => {
+//                           infoWindow.open(this.map, marker);
+//                         });
+//                     }
+//             }
+// };
 
   login() {
     this.navCtrl.push(LoginPage);
