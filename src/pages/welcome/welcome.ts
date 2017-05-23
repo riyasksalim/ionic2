@@ -41,23 +41,57 @@ export class WelcomePage {
   searchPOI(){
     debugger;
  var pyrmont = new google.maps.LatLng(this.ResultModel.result.geometry.location.lat,this.ResultModel.result.geometry.location.lng);
+ var styles = [{
+        stylers: [{
+          hue: "#00b2ff"
+        }, {
+          saturation: -50
+        }, {
+          lightness: 7
+        }, {
+          weight: 1
+        }
+
+        ]
+      }, {
+        featureType: "road",
+        elementType: "geometry",
+        stylers: [{
+          lightness: 100
+        }, {
+          visibility: "on"
+        }]
+      }, {
+        featureType: "road",
+        elementType: "labels",
+        stylers: [{
+          visibility: "on"
+        }]
+      }];
+
+      var styledMap = new google.maps.StyledMapType(styles, {
+        name: "Styled Map"
+      });
 
 
  let mapOptions = {
-      center: pyrmont,
-      zoom: 15,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
+     mapTypeId: google.maps.MapTypeId.ROADMAP,
+        center: pyrmont,
+        zoom: 12,
+        streetViewControl: false,
+        panControl: false,
+        zoomControlOptions: {
+          style: google.maps.ZoomControlStyle.SMALL
+        },
+        mapTypeControlOptions: {
+          mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
+        }
     }
   this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-  // var request = {
-  //   location: pyrmont,
-  //   radius: '500',
-  //   types: ['store']
-  // };
-
+ 
   this.service = new google.maps.places.PlacesService(this.map);
  
-  this.service.nearbySearch({location: pyrmont,radius: 500, type: ['pub']}, (results1, status) => {
+  this.service.nearbySearch({location: pyrmont,radius: 50000, type: ['park']}, (results1, status) => {
                   for (var i = 0; i < results1.length; i++) {
                       var place = results1[i];
                         var geocoder = new google.maps.Geocoder;
@@ -66,7 +100,7 @@ export class WelcomePage {
                         debugger;
                         if (status === 'OK') {
                                   if (results[0]) {
-                                    this.map.setZoom(11);
+                                    this.map.setZoom(50);
                                     this.map.setCenter(results[0].geometry.location);
                                     var marker = new google.maps.Marker({
                                       map: this.map,
@@ -77,10 +111,9 @@ export class WelcomePage {
                                       let infoWindow = new google.maps.InfoWindow({ content: content });
                                                     infoWindow.open(this.map, marker);
                                                     marker.setAnimation(google.maps.Animation.BOUNCE);
-                                          //  google.maps.event.addListener(marker, 'click', () => {
-                                          //           infoWindow.open(this.map, marker);
-                                          //           marker.setAnimation(google.maps.Animation.BOUNCE);
-                                          //         });
+                                       
+                                           this.map.mapTypes.set('map_style', styledMap);
+                                            this.map.setMapTypeId('map_style');
                                  
                                   } else {
                                     window.alert('No results found');
@@ -98,28 +131,6 @@ export class WelcomePage {
 
 };
 
-// setmarker(results,status){
-
-//  if (status == google.maps.places.PlacesServiceStatus.OK) {
-//                     for (var i = 0; i < results.length; i++) {
-//                       var place = results[i];
-//                       let marker = new google.maps.Marker({
-//                         map: this.map,
-//                         animation: google.maps.Animation.DROP,
-//                         position: place.geometry.location
-//                       });
-                
-//                         let content = "<h4>Information!</h4>";  
-//                         let infoWindow = new google.maps.InfoWindow({
-//                           content: content
-//                         });
-                
-//                         google.maps.event.addListener(marker, 'click', () => {
-//                           infoWindow.open(this.map, marker);
-//                         });
-//                     }
-//             }
-// };
 
   login() {
     this.navCtrl.push(LoginPage);
