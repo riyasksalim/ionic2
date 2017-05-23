@@ -150,6 +150,9 @@ export class WelcomePage {
       this.showlist=!this.showlist;
       this.poititle=(this.showlist)?"show list in map":"show list";
   }
+  sync(){
+
+  }
 
  
 }
