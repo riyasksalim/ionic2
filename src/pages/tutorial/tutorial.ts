@@ -75,7 +75,7 @@ this.showPrompt();
             console.log('Cancel clicked');
 
             let modal = this.ModalCtrl.create(PageGmapAutocompletePage);
-            let me = this;
+           
             modal.onDidDismiss(data => {
               this.address = data;
               debugger;
