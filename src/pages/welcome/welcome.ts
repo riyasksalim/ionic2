@@ -42,7 +42,7 @@ export class WelcomePage implements OnInit {
 
   searchPOI() {
 
-debugger;
+    debugger;
 
     var pyrmont = new google.maps.LatLng(this.ResultModel.result.geometry.location.lat, this.ResultModel.result.geometry.location.lng);
     var styles = [{

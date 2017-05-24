@@ -297,9 +297,9 @@ export class PageGmapAutocompletePage {
             console.log(results[1].place_id);
             this.result = this.load(results[1].place_id);
             debugger;
-        
+
             let toast = this.toastCtrl.create({
-              message: 'Your location set to '+ this.result.result.name,
+              message: 'Your location set to ' + this.result.result.name,
               duration: 3000,
               position: 'top'
             });
