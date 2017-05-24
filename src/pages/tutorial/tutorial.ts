@@ -76,7 +76,7 @@ export class TutorialPage {
           handler: data => {
             console.log('Cancel clicked');
 
-            let modal = this.ModalCtrl.create(PageGmapAutocompletePage);
+            let modal = this.ModalCtrl.create(PageGmapAutocompletePage,{"location":null});
 
             modal.present();
 
@@ -94,29 +94,26 @@ export class TutorialPage {
 
             loading.present();
 
-            setTimeout(() => {
-              console.log("Finded the location");
-              loading.dismiss();
-
-              let toast = this.toastCtrl.create({
-                message: 'Your location set to ....',
-                duration: 3000,
-                position: 'top'
-              });
-
-              toast.present();
-
-              this.navCtrl.setRoot(WelcomePage, {}, {
-                animate: true,
-                direction: 'forward'
-              });
-            }, 5000);
+           if (navigator.geolocation) {
+                      navigator.geolocation.getCurrentPosition(this.showPosition);
+                     loading.dismiss();
+                  } else {
+                     var a = "Geolocation is not supported by this browser.";
+                  }
           }
         }
       ]
     });
     prompt.present();
   }
+
+    showPosition = (position) => { 
+      
+      let modal = this.ModalCtrl.create(PageGmapAutocompletePage,{"location":position});
+    
+      modal.present();
+}
+
   onSlideChangeStart(slider) {
     this.showSkip = !slider.isEnd;
   }

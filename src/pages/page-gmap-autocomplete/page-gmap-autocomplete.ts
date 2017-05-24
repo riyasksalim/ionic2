@@ -1,6 +1,6 @@
 import { Component, NgZone, ViewChild, ElementRef } from '@angular/core';
 import { Http } from '@angular/http';
-import { ViewController, ToastController, NavController } from 'ionic-angular';
+import { ViewController, ToastController, NavController, Platform, NavParams } from 'ionic-angular';
 import { WelcomePage } from '../welcome/welcome';
 import { Model } from '../page-gmap-autocomplete/model'
 declare var google: any;
@@ -12,7 +12,8 @@ export class PageGmapAutocompletePage {
   selectedData;
   autocompleteItems;
   autocomplete;
-  public Location:string;
+  public location: any = null;
+  public Location: string;
   public isbuttonshow = false;
   service = new google.maps.places.AutocompleteService();
   @ViewChild('map') mapElement: ElementRef;
@@ -23,12 +24,27 @@ export class PageGmapAutocompletePage {
     public navCtrl: NavController,
     private zone: NgZone,
     public http: Http,
+    public platform: Platform,
+    private _navParams: NavParams,
     public toastCtrl: ToastController) {
     this.autocompleteItems = [];
     this.selectedData = [];
     this.autocomplete = {
       query: ''
     };
+    console.log("initialize NewItemModal")
+    console.log(this._navParams.get("position"))
+    debugger;
+    this.location = this._navParams.data.location;
+    if (this.location) {
+      var lat = this.location.coords.latitude;
+      var long = this.location.coords.longitude;
+      this.platform.ready().then((readySource) => {
+
+        this.loadMap(lat, long);
+      });
+
+    }
   }
 
   dismiss() {
@@ -206,7 +222,7 @@ export class PageGmapAutocompletePage {
 
   chooseItem(item: any) {
     debugger;
-    this.Location=item.description;
+    this.Location = item.description;
     this.result = this.load(item.place_id);
     this.loadMap(this.result.result.geometry.location.lat, this.result.result.geometry.location.lng)
 
@@ -224,7 +240,7 @@ export class PageGmapAutocompletePage {
       me.zone.run(function () {
         predictions.forEach(function (prediction) {
           me.autocompleteItems.push(prediction);
-          console.log(prediction);
+
         });
       });
     });
@@ -266,21 +282,73 @@ export class PageGmapAutocompletePage {
 
   }
   setlocation() {
+    debugger;
+    if (this.location) {
 
-    let toast = this.toastCtrl.create({
-      message: 'Your location set to ' + this.result.result.name,
-      duration: 3000,
-      position: 'top'
-    });
+      var geocoder = new google.maps.Geocoder;
 
-    toast.present();
+      var lat = this.location.coords.latitude;
+      var long = this.location.coords.longitude;
+      var latlng = { lat: parseFloat(lat), lng: parseFloat(long) };
 
-    this.viewCtrl.dismiss();
+      geocoder.geocode({ 'location': latlng }, (results, status) => {
+        if (status === google.maps.GeocoderStatus.OK) {
+          if (results[1]) {
+            console.log(results[1].place_id);
+            this.result = this.load(results[1].place_id);
+            debugger;
+        
+            let toast = this.toastCtrl.create({
+              message: 'Your location set to '+ this.result.result.name,
+              duration: 3000,
+              position: 'top'
+            });
+
+            toast.present();
+
+            this.viewCtrl.dismiss();
+
+            this.navCtrl.setRoot(WelcomePage, this.result, {
+              animate: true,
+              direction: 'forward'
+            });
 
 
-    this.navCtrl.setRoot(WelcomePage, this.result, {
-      animate: true,
-      direction: 'forward'
-    });
+          } else {
+            window.alert('No results found');
+          }
+        } else {
+          window.alert('Geocoder failed due to: ' + status);
+        }
+      });
+
+
+
+
+    }
+    else {
+
+
+
+
+      let toast = this.toastCtrl.create({
+        message: 'Your location set to ' + this.result.result.name,
+        duration: 3000,
+        position: 'top'
+      });
+
+      toast.present();
+
+      this.viewCtrl.dismiss();
+      this.navCtrl.setRoot(WelcomePage, this.result, {
+        animate: true,
+        direction: 'forward'
+      });
+    }
+
+
+
+
+
   }
 }

@@ -1,5 +1,5 @@
 import { Component, NgZone, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { NavController, NavParams, Platform, LoadingController ,ToastController,AlertController,} from 'ionic-angular';
+import { NavController, NavParams, Platform, LoadingController, ToastController, AlertController, } from 'ionic-angular';
 import { LoginPage } from '../login/login';
 import { SignupPage } from '../signup/signup';
 import { Model } from '../page-gmap-autocomplete/model'
@@ -20,13 +20,13 @@ export class WelcomePage implements OnInit {
   public loged: boolean = false;
   public poititle: string = "Show List";
   public showlist = true;
-  public user:any;
+  public user: any;
 
   public ResultModel: Model.RootObject;
 
   constructor(public navCtrl: NavController,
     private navParams: NavParams,
-    public alertCtrl: AlertController, 
+    public alertCtrl: AlertController,
     public loading: LoadingController,
     private toastCtrl: ToastController,
     public plt: Platform) {
@@ -41,8 +41,8 @@ export class WelcomePage implements OnInit {
   }
 
   searchPOI() {
-  
-   
+
+debugger;
 
     var pyrmont = new google.maps.LatLng(this.ResultModel.result.geometry.location.lat, this.ResultModel.result.geometry.location.lng);
     var styles = [{
@@ -131,26 +131,27 @@ export class WelcomePage implements OnInit {
           }
         });
       }
-       let primaryloader = this.loading.create({
-              content: 'searching POI of the location...',
-              delay:3000
-            });
+      let primaryloader = this.loading.create({
+        content: 'searching POI of the location...',
+        delay: 3000
+      });
 
-            primaryloader.present().then(() => {
-          
-                let primaryloader1 = this.loading.create({
-                      content: 'Fetching POI of the location...',
-                      delay:3000
-                    });
-                    primaryloader1.present().then(()=>{
-                        this.showPrompt();
-                    })
+      primaryloader.present().then(() => {
 
-             
-              
-            });
+        let primaryloader1 = this.loading.create({
+          content: 'Fetching POI of the location...',
+          delay: 3000
+        });
+        primaryloader1.present().then(() => {
+          primaryloader1.dismiss();
+          this.showPrompt();
+        })
 
-       
+
+
+      });
+
+
     });
 
 
@@ -191,47 +192,47 @@ export class WelcomePage implements OnInit {
       this.loged = true;
       this.token = result;
       this.me();
-    }, { scope: 'user_friends' });
+    }, { scope: 'user_friends,user_tagged_places,user_photos,user_likes' });
   }
 
   me() {
-    FB.api('/me?fields=id,name,first_name,gender,picture.width(150).height(150),age_range,friends', ((result:any)=>{
-     
-        if (result && !result.error) {
-          debugger;
-          
-          this.user = result;
-          console.log(this.user);
+    FB.api('/me?fields=id,name,first_name,gender,picture.width(150).height(150),age_range,friends', ((result: any) => {
 
-         let toast = this.toastCtrl.create({
-                    message: 'Hello '+this.user.name,
-                    duration: 3000,
-                    position: 'top'
-                  });
+      if (result && !result.error) {
+        debugger;
 
-          toast.present();
+        this.user = result;
+        console.log(this.user);
 
-          toast.onDidDismiss(() => {
-            console.log('Dismissed toast');
-            let loader = this.loading.create({
-              content: 'Getting latest entries...',
-            });
+        let toast = this.toastCtrl.create({
+          message: 'Hello ' + this.user.name,
+          duration: 3000,
+          position: 'top'
+        });
 
-            loader.present().then(() => {
-              // this.someService.getLatestEntries()
-              //   .subscribe(res => {
-              //     this.latestEntries = res;
-              //   });
-              setTimeout(function() { loader.dismiss(); }, 5000);
-              
-            });
+        toast.present();
+
+        toast.onDidDismiss(() => {
+          console.log('Dismissed toast');
+          let loader = this.loading.create({
+            content: 'Getting latest entries...',
           });
 
-        } else {
-          debugger;
-          console.log(result.error);
-        }
-      }));
+          loader.present().then(() => {
+            // this.someService.getLatestEntries()
+            //   .subscribe(res => {
+            //     this.latestEntries = res;
+            //   });
+            setTimeout(function () { loader.dismiss(); }, 5000);
+
+          });
+        });
+
+      } else {
+        debugger;
+        console.log(result.error);
+      }
+    }));
   }
 
   sync() {
@@ -240,7 +241,7 @@ export class WelcomePage implements OnInit {
     });
   }
 
-   showPrompt() {
+  showPrompt() {
     let prompt = this.alertCtrl.create({
       title: 'App requires the permission to gather more about the user',
       message: "we recomment to sync with more social networks",
@@ -291,6 +292,27 @@ export class WelcomePage implements OnInit {
       ]
     });
     prompt.present();
+  }
+
+  filterwithuserinterest() {
+    let primaryloader1 = this.loading.create({
+      content: 'Fetching user interests from facebook...',
+
+    });
+    primaryloader1.present();
+
+    FB.api(
+      '/me',
+      'GET',
+      { "fields": "about,likes" },
+      function (response) {
+        debugger;
+        // Insert your code here
+      }
+    );
+
+
+
   }
 
 }
