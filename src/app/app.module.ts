@@ -31,6 +31,7 @@ import { GoogleMaps } from '@ionic-native/google-maps';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import {PageGmapAutocompletePage } from '../pages/page-gmap-autocomplete/page-gmap-autocomplete'
+import { GoogleImageSearchComponent} from '../components/google-image-search/google-image-search'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
@@ -77,7 +78,8 @@ let pages = [
   TabsPage,
   TutorialPage,
   WelcomePage,
-  PageGmapAutocompletePage
+  PageGmapAutocompletePage,
+  GoogleImageSearchComponent
 ];
 
 export function declarations() {

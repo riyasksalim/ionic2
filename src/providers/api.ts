@@ -46,4 +46,19 @@ export class Api {
   patch(endpoint: string, body: any, options?: RequestOptions) {
     return this.http.put(this.url + '/' + endpoint, body, options);
   }
+
+  getimage1(url:string,params:any){
+       return this.http.get(url,params);
+  }
+  getimage(url:string,params:any) {
+  this.http.get(url,params)
+    .map(res => res.json())
+    .subscribe(data => {return data}, err => {return err}, () => console.log('Random Quote Complete') );
+}
+
+logError(err) {
+  console.error('There was an error: ' + err);
+}
+
+
 }
