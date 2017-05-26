@@ -1,4 +1,4 @@
-import { Component, NgZone, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { NavController, NavParams, Platform, LoadingController, ToastController, AlertController, } from 'ionic-angular';
 import { LoginPage } from '../login/login';
 import { SignupPage } from '../signup/signup';
@@ -15,6 +15,7 @@ export class WelcomePage implements OnInit {
   @ViewChild('map') mapElement: ElementRef;
   public myCallback: void;
   public map: any;
+  public likes:any=null;
   service: any;
   public token: any = "";
   public loged: boolean = false;
@@ -99,7 +100,7 @@ export class WelcomePage implements OnInit {
       for (var i = 0; i < results1.length; i++) {
         var place = results1[i];
         var geocoder = new google.maps.Geocoder;
-        var infowindow = new google.maps.InfoWindow;
+        //var infowindow = new google.maps.InfoWindow;
         geocoder.geocode({ 'placeId': place.place_id }, (results, status) => {
           debugger;
           if (status === 'OK') {
@@ -137,7 +138,7 @@ export class WelcomePage implements OnInit {
       });
 
       primaryloader.present().then(() => {
-
+         primaryloader.dismiss();
         let primaryloader1 = this.loading.create({
           content: 'Fetching POI of the location...',
           delay: 3000
@@ -300,19 +301,15 @@ export class WelcomePage implements OnInit {
 
     });
     primaryloader1.present();
-
+debugger;
     FB.api(
       '/me',
       'GET',
-      { "fields": "about,likes" },
-      function (response) {
+      { "fields": "about,likes,tagged_places" },(response:any)=>{
         debugger;
-        // Insert your code here
+        primaryloader1.dismissAll;
+       // this.likes=response.
       }
     );
-
-
-
   }
-
 }
