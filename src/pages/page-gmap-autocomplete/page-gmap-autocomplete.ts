@@ -1,4 +1,4 @@
-import { Component, NgZone, ViewChild, ElementRef } from '@angular/core';
+﻿import { Component, NgZone, ViewChild, ElementRef } from '@angular/core';
 import { Http } from '@angular/http';
 import { ViewController, ToastController, NavController, Platform, NavParams } from 'ionic-angular';
 import { WelcomePage } from '../welcome/welcome';
@@ -228,7 +228,7 @@ export class PageGmapAutocompletePage {
 
   }
 
-  updateSearch() {
+  public updateSearch() {
 
     if (this.autocomplete.query == '') {
       this.autocompleteItems = [];
@@ -245,15 +245,14 @@ export class PageGmapAutocompletePage {
       });
     });
   }
-  loadMap(latl: any, long: any) {
-    debugger;
-
+  public loadMap(latl: any, long: any) {
+   
     let latLng = new google.maps.LatLng(latl, long);
 
     let mapOptions = {
       center: latLng,
-      zoom: 15,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
+      zoom: 18,
+      mapTypeId: google.maps.MapTypeId.HYBRID
     }
     this.selectedData = this.autocompleteItems;
     this.autocompleteItems = [];

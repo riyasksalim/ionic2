@@ -1,9 +1,19 @@
 page-tutorial {
+
+  h1, h2, h3, h4, h5, h6 {
+  color: wheat;
+}
   .toolbar-background {
     background: transparent;
     border-color: transparent;
   }
-
+.alertDanger{
+    background-color: white;
+    color: red;
+    button{
+        color: red;
+    }
+    }
   .slide-zoom {
     height: 100%;
   }
@@ -29,7 +39,7 @@ page-tutorial {
     color: #60646B;
 
     b {
-      color: #000000;
+      color: wheat;
     }
   }
 ion-spinner * {
