@@ -87,7 +87,7 @@ export class TutorialPage {
                 {
                     text: 'Current',
                     handler: data => {
-                        console.log('Saved clicked');
+                       
                         let loading = this.loadingController.create({
                             spinner: 'circles',
                             content: 'Locating current location Please Wait...',
@@ -110,9 +110,10 @@ export class TutorialPage {
 
     public showPosition = (position) => {
 
-        let modal = this.ModalCtrl.create(PageGmapAutocompletePage, { "location": position });
+        this.navCtrl.push(PageGmapAutocompletePage, position);
+        //let modal = this.ModalCtrl.create(PageGmapAutocompletePage, { "location": position });
 
-        modal.present();
+        //modal.present();
     }
 
     public onSlideChangeStart(slider) {

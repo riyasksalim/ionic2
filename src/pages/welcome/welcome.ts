@@ -3,6 +3,8 @@ import { NavController, NavParams, Platform, LoadingController, ToastController,
 import { LoginPage } from '../login/login';
 import { SignupPage } from '../signup/signup';
 import { Model } from '../page-gmap-autocomplete/model'
+import { FacebookResponse } from '../welcome/FbModel'
+import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
 
 declare var google: any;
 declare const FB: any;
@@ -16,13 +18,14 @@ export class WelcomePage implements OnInit {
     public myCallback: void;
     public map: any;
     public likes: any = null;
+    public Places: any = null;
     service: any;
     public token: any = "";
     public loged: boolean = false;
     public poititle: string = "Show List";
-    public showlist = true;
+    public showlist = false;
     public user: any;
-
+    public fbmodel: FacebookResponse.FacebookRoot;
     public ResultModel: Model.RootObject;
 
     constructor(public navCtrl: NavController,
@@ -30,6 +33,7 @@ export class WelcomePage implements OnInit {
         public alertCtrl: AlertController,
         public loading: LoadingController,
         private toastCtrl: ToastController,
+        private fb: Facebook,
         public plt: Platform) {
 
         this.ResultModel = navParams.data;
@@ -44,37 +48,37 @@ export class WelcomePage implements OnInit {
     public searchPOI() {
 
         var pyrmont = new google.maps.LatLng(this.ResultModel.result.geometry.location.lat, this.ResultModel.result.geometry.location.lng);
-        var styles = [{
-            stylers: [{
-                hue: "#00b2ff"
-            }, {
-                saturation: -50
-            }, {
-                lightness: 7
-            }, {
-                weight: 1
-            }
+        //var styles = [{
+        //    stylers: [{
+        //        hue: "#00b2ff"
+        //    }, {
+        //        saturation: -50
+        //    }, {
+        //        lightness: 7
+        //    }, {
+        //        weight: 1
+        //    }
 
-            ]
-        }, {
-            featureType: "road",
-            elementType: "geometry",
-            stylers: [{
-                lightness: 100
-            }, {
-                visibility: "on"
-            }]
-        }, {
-            featureType: "road",
-            elementType: "labels",
-            stylers: [{
-                visibility: "on"
-            }]
-        }];
+        //    ]
+        //}, {
+        //    featureType: "road",
+        //    elementType: "geometry",
+        //    stylers: [{
+        //        lightness: 100
+        //    }, {
+        //        visibility: "on"
+        //    }]
+        //}, {
+        //    featureType: "road",
+        //    elementType: "labels",
+        //    stylers: [{
+        //        visibility: "on"
+        //    }]
+        //}];
 
-        var styledMap = new google.maps.StyledMapType(styles, {
-            name: "Styled Map"
-        });
+        //var styledMap = new google.maps.StyledMapType(styles, {
+        //    name: "Styled Map"
+        //});
 
 
         let mapOptions = {
@@ -84,9 +88,9 @@ export class WelcomePage implements OnInit {
             streetViewControl: true,
             panControl: true,
         
-            mapTypeControlOptions: {
-                mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
-            }
+            //mapTypeControlOptions: {
+            //    mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
+            //}
         }
         this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
         let toast = this.toastCtrl.create({
@@ -112,6 +116,7 @@ export class WelcomePage implements OnInit {
                                 animation: google.maps.Animation.DROP,
                                 position: results[0].geometry.location
                             });
+                            debugger;
                             let content = "<h4>" + results[0].formatted_address + "</h4>";
                             let infoWindow = new google.maps.InfoWindow({ content: content });
                             google.maps.event.addListener(marker, 'click', () => {
@@ -119,8 +124,8 @@ export class WelcomePage implements OnInit {
                                 marker.setAnimation(google.maps.Animation.BOUNCE);
                             });
 
-                            this.map.mapTypes.set('map_style', styledMap);
-                            this.map.setMapTypeId('map_style');
+                            //this.map.mapTypes.set('map_style', styledMap);
+                            //this.map.setMapTypeId('map_style');
 
                         } else {
                             window.alert('No results found');
@@ -161,6 +166,7 @@ export class WelcomePage implements OnInit {
     }
 
     login() {
+        
         this.navCtrl.push(LoginPage);
     }
 
@@ -168,11 +174,12 @@ export class WelcomePage implements OnInit {
         this.navCtrl.push(SignupPage);
     }
 
-    showpoilist() {
+    public showpoilist() {
+        debugger;
         this.showlist = !this.showlist;
-        this.poititle = (this.showlist) ? "show list in map" : "show list";
+        this.poititle = (this.showlist) ? "show list" : "show list in map";
     }
-    statusChangeCallback(response: any) {
+    public statusChangeCallback(response: any) {
         if (response.status === 'connected') {
             console.log('connected');
             this.loginfb();
@@ -181,7 +188,7 @@ export class WelcomePage implements OnInit {
         }
     };
 
-    loginfb() {
+    public loginfb() {
         FB.login((result: any) => {
             this.loged = true;
             this.token = result;
@@ -189,7 +196,7 @@ export class WelcomePage implements OnInit {
         }, { scope: 'user_friends,user_tagged_places,user_photos,user_likes' });
     };
 
-    me() {
+    public me() {
         FB.api('/me?fields=id,name,first_name,gender,picture.width(150).height(150),age_range,friends', ((result: any) => {
 
             if (result && !result.error) {
@@ -202,6 +209,7 @@ export class WelcomePage implements OnInit {
                     message: 'Hello ' + this.user.name,
                     duration: 3000,
                     position: 'top'
+                  
                 });
 
                 toast.present();
@@ -209,7 +217,7 @@ export class WelcomePage implements OnInit {
                 toast.onDidDismiss(() => {
                     console.log('Dismissed toast');
                     let loader = this.loading.create({
-                        content: 'Getting latest entries...',
+                        content: 'Analysing the user interests !!',
                     });
 
                     loader.present().then(() => {
@@ -217,7 +225,11 @@ export class WelcomePage implements OnInit {
                         //   .subscribe(res => {
                         //     this.latestEntries = res;
                         //   });
-                        setTimeout(function () { loader.dismiss(); }, 5000);
+                        setTimeout(()=> {
+
+                            this.filterwithuserinterest();
+                            loader.dismiss();
+                        }, 5000);
 
                     });
                 });
@@ -229,10 +241,23 @@ export class WelcomePage implements OnInit {
         }));
     };
 
-    sync() {
-        FB.getLoginStatus(response => {
-            this.statusChangeCallback(response);
-        });
+    public loginfbstatus() {
+        debugger;
+        //FB.getLoginStatus(response => {
+        //    this.statusChangeCallback(response);
+        //});
+        
+        this.fb.login(['public_profile', 'user_friends', 'email', 'user_tagged_places', 'user_photos','user_likes'])
+            .then((res: FacebookLoginResponse) =>{
+                this.loged = true;
+                this.token = res.authResponse.accessToken;
+                this.me();
+                console.log('Logged into Facebook!', res)
+            
+                
+                })
+            .catch(e => console.log('Error logging into Facebook', e));
+
     };
 
     showPrompt() {
@@ -283,7 +308,7 @@ export class WelcomePage implements OnInit {
         prompt.present();
     };
 
-    filterwithuserinterest() {
+    public filterwithuserinterest() {
         let primaryloader1 = this.loading.create({
             content: 'Fetching user interests from facebook...',
 
@@ -293,11 +318,57 @@ export class WelcomePage implements OnInit {
         FB.api(
             '/me',
             'GET',
-            { "fields": "about,likes,tagged_places" }, (response: any) => {
+            { "fields": "about,likes,tagged_places" }, (response: FacebookResponse.FacebookRoot) => {
                 debugger;
                 primaryloader1.dismiss();
-                // this.likes=response.
+               
+
+                this.likes = response.likes.data;
+                this.Places = response.tagged_places.data;
+
+                let loader = this.loading.create({
+                    content: "Authenticating...",
+                    duration: response.likes.data.length*1000
+                });
+                loader.present();
+           
+
+                for (var i = 1; i < response.likes.data.length; i++) {
+
+
+                    this.setname("Interested in "+response.likes.data[i].name, i, loader);
+                   
+                }
+                setTimeout(() => {
+                    this.syncudertaggedplaces();
+                }, response.likes.data.length * 1000);
+              
+              
+               
+                
             }
         );
     }
+
+    public setname(name: any, iteration: number, loader: any) {   // here may goes your 
+      
+        setTimeout(() => {  
+            loader.setContent(name);
+        }, iteration * 1000);
+    };
+ 
+
+    public  syncudertaggedplaces() {
+      
+            let loader = this.loading.create({
+                content: "Fetching user tagged locations...",
+                duration: this.Places.length * 1000
+            });
+            loader.present();
+
+            for (var z = 0; z < this.Places.length; z++) {
+                 this.setname("Places you may in "+this.Places[z].place.name, z, loader);
+            }
+    };
+
 };

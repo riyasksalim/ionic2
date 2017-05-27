@@ -1,4 +1,4 @@
-import { NgModule, ErrorHandler } from '@angular/core';
+﻿import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpModule, Http } from '@angular/http';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
@@ -34,7 +34,7 @@ import {PageGmapAutocompletePage } from '../pages/page-gmap-autocomplete/page-gm
 import { GoogleImageSearchComponent} from '../components/google-image-search/google-image-search'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-
+import { Facebook } from '@ionic-native/facebook';
 // The translate loader needs to know where to load i18n files
 // in Ionic's static asset pipeline.
 export function HttpLoaderFactory(http: Http) {
@@ -96,7 +96,8 @@ export function providers() {
     Items,
     User,
     Camera,
-    GoogleMaps,
+      GoogleMaps,
+      Facebook,
     SplashScreen,
     StatusBar,
 
