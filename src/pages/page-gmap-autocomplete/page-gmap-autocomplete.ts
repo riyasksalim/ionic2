@@ -1,12 +1,13 @@
 ﻿import { Component, NgZone, ViewChild, ElementRef } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, Jsonp } from '@angular/http';
 import { ViewController, ToastController, NavController, Platform, NavParams } from 'ionic-angular';
 import { WelcomePage } from '../welcome/welcome';
 import { Model } from '../page-gmap-autocomplete/model'
 declare var google: any;
 @Component({
     templateUrl: 'page-gmap-autocomplete.html'
- 
+
+    
     
 })
 
@@ -26,6 +27,7 @@ export class PageGmapAutocompletePage {
         public navCtrl: NavController,
         private zone: NgZone,
         public http: Http,
+        private _jsonp: Jsonp,
         public platform: Platform,
         private _navParams: NavParams,
         public toastCtrl: ToastController) {
@@ -197,20 +199,20 @@ export class PageGmapAutocompletePage {
             "status": "OK"
         };
 
-        // return new Promise(resolve => {
+         //return new Promise(resolve => {
 
-        //   this.http.get('https://maps.googleapis.com/maps/api/place/details/json?input=bar&placeid=ChIJsUcT7hMNCDsRxKruGn0myYk&key=AIzaSyC2zGeYgplhjSXcaQmbiAcTodM4w1Pzs4M')
-        //     .map(res => res.json())
-        //     .subscribe(data => {
-
-
-        //       resolve(data);
-        //     });
-
-        // });
+         //    this._jsonp.get('https://maps.googleapis.com/maps/api/place/details/json?input=bar&placeid=' + encodeURI(placeid) + '&key=AIzaSyC2zGeYgplhjSXcaQmbiAcTodM4w1Pzs4M')
+         //    .map(res => res.json())
+         //    .subscribe(data => {
 
 
-        return a;
+         //      resolve(data);
+         //    });
+
+         //});
+
+
+       return a;
 
     }
 
@@ -218,9 +220,17 @@ export class PageGmapAutocompletePage {
     public chooseItem(item: any) {
 
         this.Location = item.description;
-        this.result = this.load(item.place_id);
-        this.loadMap(this.result.result.geometry.location.lat, this.result.result.geometry.location.lng)
+        //this.load(item.place_id).then((data: Model.RootObject) => {
+        //    this.result = data;
+        //    console.log(data);
+        //    this.loadMap(this.result.result.geometry.location.lat, this.result.result.geometry.location.lng);
+        //}, (err) => {
 
+        //    alert(err);
+        //    console.log(err);
+        //});
+        this.result = this.load(item.place_id);
+        this.loadMap(this.result.result.geometry.location.lat, this.result.result.geometry.location.lng);
     };
 
     public updateSearch() {
@@ -289,23 +299,44 @@ export class PageGmapAutocompletePage {
                 if (status === google.maps.GeocoderStatus.OK) {
                     if (results[1]) {
                         console.log(results[1].place_id);
+                        // this.load(results[1].place_id).then((data: Model.RootObject) => {
+                        //     this.result = data;
+                        //     let toast = this.toastCtrl.create({
+                        //         message: 'Your location set to ' + this.result.result.name,
+                        //         duration: 3000,
+                        //         position: 'top'
+                        //     });
+
+                        //     toast.present();
+
+                        //     this.viewCtrl.dismiss();
+
+                        //     this.navCtrl.setRoot(WelcomePage, this.result, {
+                        //         animate: true,
+                        //         direction: 'forward'
+                        //     });
+                          
+                        //}, (err) => {
+
+                        //    alert(err);
+                        //    console.log(err);
+                        //});
+
                         this.result = this.load(results[1].place_id);
-                        debugger;
-
                         let toast = this.toastCtrl.create({
-                            message: 'Your location set to ' + this.result.result.name,
-                            duration: 3000,
-                            position: 'top'
-                        });
+                                 message: 'Your location set to ' + this.result.result.name,
+                                 duration: 3000,
+                                 position: 'top'
+                             });
 
-                        toast.present();
+                             toast.present();
 
-                        this.viewCtrl.dismiss();
+                             this.viewCtrl.dismiss();
 
-                        this.navCtrl.setRoot(WelcomePage, this.result, {
-                            animate: true,
-                            direction: 'forward'
-                        });
+                             this.navCtrl.setRoot(WelcomePage, this.result, {
+                                 animate: true,
+                                 direction: 'forward'
+                             });
 
 
                     } else {

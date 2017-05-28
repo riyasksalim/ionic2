@@ -1,6 +1,6 @@
 ﻿import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpModule, Http } from '@angular/http';
+import { HttpModule, Http, JsonpModule  } from '@angular/http';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { Storage, IonicStorageModule } from '@ionic/storage';
 
@@ -111,7 +111,8 @@ export function providers() {
   declarations: declarations(),
   imports: [
     BrowserModule,
-    HttpModule,
+      HttpModule,
+      JsonpModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
