@@ -14,6 +14,9 @@
       <h2 class="slide-title" [innerHTML]="slide.title"></h2>
       <p [innerHTML]="slide.description"></p>
       <google-image-search></google-image-search>
+    <p [ngStyle]="{'font-size':test}">{{test}}</p>
+      <input  type="text" [(ngModel)]="test"/>
+      <input  type="button" (click)="testme(mydata.value)"/>
     </ion-slide>
     <ion-slide>
       <img src="assets/img/ica-slidebox-img-4.png" class="slide-image" />

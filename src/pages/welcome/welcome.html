@@ -25,7 +25,7 @@
       <button  ion-button icon-only (click)="loginfbstatus()">
         <ion-icon ios="logo-facebook"  md="logo-facebook"></ion-icon>
       </button>
-      <button ion-button icon-only>
+      <button ion-button icon-only  (click)="showlistofpoi()">
         <ion-icon ios="ios-list" md="md-list"></ion-icon>
       </button>
       <button ion-button icon-only>
@@ -39,8 +39,8 @@
 </ion-header>
 <ion-content scroll="false">
  
-
-  <ion-list  [hidden]="!showlist">
+  <!--<page-list-master></page-list-master>-->
+  <!--<ion-list  [hidden]="!showlist">
    <ion-item>
     <ion-thumbnail item-left>
       <img src="img/thumbnail-totoro.png">
@@ -81,6 +81,6 @@
     <p>Hayao Miyazaki • 1988</p>
     <button ion-button clear item-right>View</button>
   </ion-item>
-</ion-list>
+</ion-list>-->
 <div [hidden]="showlist" style="width: 100%; height: 100%" #map id="map"></div>  
 </ion-content>

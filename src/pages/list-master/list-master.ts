@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { NavController, ModalController } from 'ionic-angular';
-
+﻿import { Component } from '@angular/core';
+import { NavController, ModalController, NavParams} from 'ionic-angular';
+import { GooglePOI } from '../welcome/GooglePOI'
 import { ItemCreatePage } from '../item-create/item-create';
 import { ItemDetailPage } from '../item-detail/item-detail';
 
@@ -14,9 +14,14 @@ import { Item } from '../../models/item';
 })
 export class ListMasterPage {
   currentItems: Item[];
-
-  constructor(public navCtrl: NavController, public items: Items, public modalCtrl: ModalController) {
-    this.currentItems = this.items.query();
+  public GoogleModel: GooglePOI.POI[];
+  constructor(public navCtrl: NavController,
+      public items: Items,
+      public modalCtrl: ModalController,
+      private navParams: NavParams) {
+      this.currentItems = this.items.query();
+      debugger;
+      this.GoogleModel = navParams.data;
   }
 
   /**

@@ -6,6 +6,8 @@ import { Model } from '../page-gmap-autocomplete/model'
 declare var google: any;
 @Component({
     templateUrl: 'page-gmap-autocomplete.html'
+ 
+    
 })
 
 export class PageGmapAutocompletePage {
@@ -34,7 +36,7 @@ export class PageGmapAutocompletePage {
         };
         debugger;
       
-        if (this._navParams.data.location) {
+        if (this._navParams.data.coords) {
             var lat = this._navParams.data.coords.latitude;
             var long = this._navParams.data.coords.longitude;
             this.platform.ready().then((readySource) => {
@@ -275,7 +277,7 @@ export class PageGmapAutocompletePage {
     }
     public setlocation() {
         debugger;
-        if (this._navParams.data.location) {
+        if (this._navParams.data.coords) {
 
             var geocoder = new google.maps.Geocoder;
 

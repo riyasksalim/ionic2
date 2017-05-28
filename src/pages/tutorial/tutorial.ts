@@ -15,13 +15,15 @@ export interface Slide {
 @Component({
     selector: 'page-tutorial',
     templateUrl: 'tutorial.html',
-    providers: []
+    providers: [],
+    
 })
 export class TutorialPage {
     slides: Slide[];
     showSkip = true;
     address: any = [];
     data: any;
+    public test: string;
 
     constructor(public navCtrl: NavController,
         private ModalCtrl: ModalController,
@@ -37,35 +39,32 @@ export class TutorialPage {
             "TUTORIAL_SLIDE2_DESCRIPTION",
             "TUTORIAL_SLIDE3_TITLE",
             "TUTORIAL_SLIDE3_DESCRIPTION",
-        ]).subscribe(
-            (values) => {
-                console.log('Loaded values', values);
-                this.slides = [
-                    {
-                        title: values.TUTORIAL_SLIDE1_TITLE,
-                        description: values.TUTORIAL_SLIDE1_DESCRIPTION,
-                        image: 'assets/img/ica-slidebox-img-1.png',
-                    },
-                    {
-                        title: values.TUTORIAL_SLIDE2_TITLE,
-                        description: values.TUTORIAL_SLIDE2_DESCRIPTION,
-                        image: 'assets/img/ica-slidebox-img-2.png',
-                    },
-                    {
-                        title: values.TUTORIAL_SLIDE3_TITLE,
-                        description: values.TUTORIAL_SLIDE3_DESCRIPTION,
-                        image: 'assets/img/ica-slidebox-img-3.png',
-                    }
-                ];
+        ]).subscribe((values) => {
+            this.slides = [
+                {
+                    title: values.TUTORIAL_SLIDE1_TITLE,
+                    description: values.TUTORIAL_SLIDE1_DESCRIPTION,
+                    image: 'assets/img/ica-slidebox-img-1.png',
+                },
+                {
+                    title: values.TUTORIAL_SLIDE2_TITLE,
+                    description: values.TUTORIAL_SLIDE2_DESCRIPTION,
+                    image: 'assets/img/ica-slidebox-img-2.png',
+                },
+                {
+                    title: values.TUTORIAL_SLIDE3_TITLE,
+                    description: values.TUTORIAL_SLIDE3_DESCRIPTION,
+                    image: 'assets/img/ica-slidebox-img-3.png',
+                }
+            ];
             });
+        this.test = "10px";
     }
-
+    public testme(data) {
+        console.log(data);
+    }
     public startApp() {
 
-        this.showPrompt();
-
-    }
-    public showPrompt() {
         let prompt = this.alertCtrl.create({
             title: 'Choose Location',
             message: "",
@@ -75,7 +74,6 @@ export class TutorialPage {
                 {
                     text: 'Manual',
                     handler: data => {
-                        console.log('Cancel clicked');
 
                         let modal = this.ModalCtrl.create(PageGmapAutocompletePage, { "location": null });
 
@@ -87,16 +85,21 @@ export class TutorialPage {
                 {
                     text: 'Current',
                     handler: data => {
-                       
+
                         let loading = this.loadingController.create({
                             spinner: 'circles',
                             content: 'Locating current location Please Wait...',
                         });
 
                         loading.present();
+                        let options = {
+                            enableHighAccuracy: true,
+                            timeout: 5000,
+                            maximumAge: 0
+                        };
 
                         if (navigator.geolocation) {
-                            navigator.geolocation.getCurrentPosition(this.showPosition);
+                            navigator.geolocation.getCurrentPosition(this.showPosition, this.errorcallback, options);
                             loading.dismiss();
                         } else {
                             var a = "Geolocation is not supported by this browser.";
@@ -106,7 +109,9 @@ export class TutorialPage {
             ]
         });
         prompt.present();
+
     }
+   
 
     public showPosition = (position) => {
 
@@ -115,6 +120,9 @@ export class TutorialPage {
 
         //modal.present();
     }
+    public errorcallback = (err) => {
+        console.log(err);
+    };
 
     public onSlideChangeStart(slider) {
         this.showSkip = !slider.isEnd;
